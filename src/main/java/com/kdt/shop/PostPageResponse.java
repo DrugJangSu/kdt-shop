@@ -9,4 +9,3 @@ public record PostPageResponse(
         int size,
         long totalElements) implements Serializable {
 }
-// Check
