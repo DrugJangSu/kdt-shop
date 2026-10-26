@@ -1,0 +1,57 @@
+title = "kdt-shop secret protection"
+[extend]
+useDefault = true
+
+[[rules]]
+id = "literal-password-or-token"
+description = "Literal password, secret, API key or token assignment"
+regex = '''(?i)(?:[a-z0-9_.-]*(?:password|passwd|pwd|secret|api[_-]?key|access[_-]?token|refresh[_-]?token|auth[_-]?token|token))["']?\s*(?:=|:)\s*["']?([^\s"',;<>`]+)'''
+secretGroup = 1
+[[rules.allowlists]]
+regexTarget = "secret"
+regexes = ['''^\$\{[A-Z][A-Z0-9_]*\}$''', '''^(?:YOUR_[A-Z0-9_]+|null|None)$''']
+
+[[rules]]
+id = "credential-in-url"
+description = "Credentials embedded in URL"
+regex = '''(?i)[a-z][a-z0-9+.-]*://[^\s/:@]+:([^\s/@]+)@'''
+secretGroup = 1
+
+[[rules]]
+id = "authorization-value"
+description = "Hardcoded Authorization header"
+regex = '''(?i)(?:bearer|basic)\s+([a-zA-Z0-9_+/.=-]{8,})'''
+secretGroup = 1
+
+[[rules]]
+id = "credential-setter"
+description = "Hardcoded credential passed to setter"
+regex = '''(?i)(?:set|with)(?:password|passwd|secret|apiKey|accessToken|refreshToken|token)\s*\(\s*["']([^"'\r\n]+)["']'''
+secretGroup = 1
+[[rules.allowlists]]
+regexTarget = "secret"
+regexes = ['''^\$\{[A-Z][A-Z0-9_]*\}$''', '''^YOUR_[A-Z0-9_]+$''']
+
+[[rules]]
+id = "xml-credential-value"
+description = "Password or token in XML configuration"
+regex = '''(?i)(?:name|key)\s*=\s*["'][^"']*(?:password|passwd|secret|api[_-]?key|token)["']\s+value\s*=\s*["']([^"'\r\n]+)["']'''
+secretGroup = 1
+[[rules.allowlists]]
+regexTarget = "secret"
+regexes = ['''^\$\{[A-Z][A-Z0-9_]*\}$''', '''^YOUR_[A-Z0-9_]+$''']
+
+[[rules]]
+id = "private-key-header"
+description = "Private key header, including incomplete keys"
+regex = '''-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----'''
+
+[[rules]]
+id = "short-password-variable"
+description = "Password stored in abbreviated variable"
+regex = '''(?i)\b(?:[a-z0-9_]*(?:pass|passwd|pwd|pw)|api[_-]?key)["']?\s*(?:=|:)\s*["']([^"'\r\n]+)["']'''
+secretGroup = 1
+
+[[rules.allowlists]]
+regexTarget = "secret"
+regexes = ['''^\$\{[A-Z][A-Z0-9_]*\}$''', '''^YOUR_[A-Z0-9_]+$''']
