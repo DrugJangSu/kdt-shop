@@ -48,3 +48,7 @@ Accept: application/json
 ### 목록 캐시만 먼저 확인: 같은 요청을 두 번 실행
 GET {{baseUrl}}/api/v1/posts?page=0&size=3
 Accept: application/json
+
+### 0-4 캐시 확인
+GET {{baseUrl}}/api/v1/posts?page=0&size=4
+Accept: application/json

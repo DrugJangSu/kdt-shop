@@ -1,7 +1,7 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '4.1.2'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'                                              // 순수 Java 프로젝트 기능(compileJava, test 등)
+    id 'org.springframework.boot' version '4.1.2'          // Spring Boot 플러그인(bootRun, bootJar 등)
+    id 'io.spring.dependency-management' version '1.1.7'   // Spring Boot BOM으로 라이브러리 버전을 자동 관리
 }
 
 group = 'com.kdt'
@@ -10,20 +10,26 @@ description = 'kdt-shop'
 
 java {
     toolchain {
+        // 이 프로젝트의 Java 버전을 21로 고정한다.
+        // (내 PC에 다른 Java가 설치되어 있어도 Gradle이 Java 21을 찾아서 사용한다.)
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+// QueryDSL 버전을 변수로 빼 두면 아래 의존성 두 곳에서 같은 버전을 재사용할 수 있다.
+def querydslVersion = '7.7'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
+    // --- Spring / JPA / DB 기본 의존성 -------------------------------------
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'   // Spring Data JPA + Hibernate
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'     // @RestController, JSON 응답
+    compileOnly 'org.projectlombok:lombok'                                  // 컴파일할 때만 쓰는 Lombok(실행 시 불필요)
+    runtimeOnly 'com.mysql:mysql-connector-j'                               // MySQL JDBC 드라이버
+    annotationProcessor 'org.projectlombok:lombok'                          // @Getter, @RequiredArgsConstructor 등을 실제 코드로 생성
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testCompileOnly 'org.projectlombok:lombok'
@@ -31,6 +37,44 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+
+
+
+    // --- QueryDSL ---------------------------------------------------------
+    // querydsl-jpa: JPAQueryFactory, JPAQuery 같은 QueryDSL의 JPA 전용 API
+    // (패키지 이름은 com.querydsl.* 이지만, 유지보수가 이어지는 OpenFeign 포크를 사용한다.)
+    implementation "io.github.openfeign.querydsl:querydsl-jpa:${querydslVersion}"
+
+    // querydsl-apt: 컴파일할 때 @Entity를 읽고 Q 클래스를 만들어 주는 "애노테이션 프로세서"
+    // 뒤의 :jpa 는 JPA 엔티티용 프로세서를 고르는 classifier다.
+    annotationProcessor "io.github.openfeign.querydsl:querydsl-apt:${querydslVersion}:jpa"
+
+    // 애노테이션 프로세서는 컴파일러와 "별도의 클래스패스"에서 실행된다.
+    // 따라서 엔티티의 @Entity, @Id, @Column 같은 Jakarta 애노테이션을 읽을 수 있도록
+    // Jakarta API를 프로세서 경로에도 직접 넣어 준다. (버전은 Spring Boot BOM이 맞춰 준다.)
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+}
+
+// Q 클래스가 생성될 디렉터리.
+// 직접 작성하는 소스가 아니라, 컴파일 시 애노테이션 프로세서가 만들어 주는 소스다.
+def querydslDir = 'src/main/generated'
+
+sourceSets {
+    // 위 디렉터리를 Java 소스 경로에 추가해야 Q 클래스도 컴파일 대상이 된다.
+    main.java.srcDirs += [querydslDir]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // 모든 Java 컴파일 작업에서 생성 소스(Q 클래스)의 출력 위치를 지정한다.
+    options.generatedSourceOutputDirectory.set(file(querydslDir))
+}
+
+clean {
+    // gradle clean 을 실행하면 생성된 Q 클래스도 함께 지운다.
+    // (다시 compileJava를 실행하면 최신 엔티티 기준으로 재생성된다.)
+    delete file(querydslDir)
 }
 
 tasks.named('test') {
