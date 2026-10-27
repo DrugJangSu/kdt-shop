@@ -44,3 +44,7 @@ Accept: application/json
 ### 생성 뒤 첫 페이지 재조회
 GET {{baseUrl}}/api/v1/posts?page=0&size=2
 Accept: application/json
+
+### 목록 캐시만 먼저 확인: 같은 요청을 두 번 실행
+GET {{baseUrl}}/api/v1/posts?page=0&size=3
+Accept: application/json
