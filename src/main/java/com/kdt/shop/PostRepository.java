@@ -19,4 +19,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                             join p.member m 
                     """)
     Page<PostItem> findPageItems(Pageable pageable);
+
+    @Query(value = """
+            select p.id as id, p.title as title, m.loginId as loginId
+                        from Post p
+                                    join p p.member m
+                        """,
+            countQuery = """
+                    select count(p)
+                    from Post p
+                    join p.member m
+                    """
+    )
+    Page<PostListView> findPageView(Pageable pageable);
 }
