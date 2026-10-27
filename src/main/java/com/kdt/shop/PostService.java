@@ -2,6 +2,7 @@ package com.kdt.shop;
 
 import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "shopPosts", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public PostPageResponse list(Pageable pageable) {
         PageRequest fixed = PageRequest.of(
                 pageable.getPageNumber(),
@@ -71,5 +73,4 @@ public class PostService {
         Post post = this.postRepository.findById(id).orElseThrow(() -> new NotFoundException("post missing"));
         this.postRepository.delete(post);
     }
-
 }
