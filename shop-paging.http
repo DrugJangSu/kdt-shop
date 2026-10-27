@@ -29,3 +29,18 @@ Accept: application/json
 ### 요청은 10000이지만 서버가 적용한 크기는 100
 GET {{baseUrl}}/api/v1/posts?page=0&size=10000
 Accept: application/json
+
+### 본문에서 남길 글: 한 번만 생성
+POST {{baseUrl}}/api/v1/posts
+Content-Type: application/json
+Accept: application/json
+
+{"title":"apple","body":"menu"}
+
+### 생성한 글 한 건 확인
+GET {{baseUrl}}/api/v1/posts/3
+Accept: application/json
+
+### 생성 뒤 첫 페이지 재조회
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
+Accept: application/json
