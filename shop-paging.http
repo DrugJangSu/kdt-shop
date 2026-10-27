@@ -1,0 +1,31 @@
+#### GET request to example server
+#GET https://examples.http-client.intellij.net/get
+#    ?generated-in=IntelliJ IDEA
+#
+####
+
+@baseUrl = http://127.0.0.1:8080
+
+### 첫 페이지
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
+Accept: application/json
+
+### 두 번째 페이지
+GET {{baseUrl}}/api/v1/posts?page=1&size=2
+Accept: application/json
+
+### 범위 밖 페이지
+GET {{baseUrl}}/api/v1/posts?page=9&size=2
+Accept: application/json
+
+### 페이지 크기만 1로 변경
+GET {{baseUrl}}/api/v1/posts?page=0&size=1
+Accept: application/json
+
+### 쿼리 생략: 기본 page=0, size=20
+GET {{baseUrl}}/api/v1/posts
+Accept: application/json
+
+### 요청은 10000이지만 서버가 적용한 크기는 100
+GET {{baseUrl}}/api/v1/posts?page=0&size=10000
+Accept: application/json

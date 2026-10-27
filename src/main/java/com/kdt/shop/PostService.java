@@ -33,6 +33,7 @@ public class PostService {
         );
 
         Page<Post> found = this.postRepository.findAll(fixed);
+
         List<PostItem> items = new ArrayList<>();
 
         for (Post post : found.getContent()) {
