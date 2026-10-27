@@ -1,5 +1,6 @@
 package com.kdt.shop;
 
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,9 +43,33 @@ public class PostService {
 //        }
 
         return new PostPageResponse(items, found.getNumber(), found.getSize(), found.getTotalElements());
-
-
     }
+    @Transactional(readOnly = true)
+    public PostResponse one(Long id) {
 
+        Post post = this.postRepository.findById(id).orElseThrow(() -> new
+                NotFoundException("post missing"));
+
+        return new PostResponse(post.getId(), post.getTitle(), post.getMember()
+                .getLoginId());
+    }
+    @Transactional
+    public PostResponse create(PostCreateRequest request) {
+        Member member = this.memberRepository.findByLoginId("shop01").orElseThrow();
+
+        Post post = new Post();
+        post.setMember(member);
+        post.setTitle(request.title());
+        post.setBody(request.body());
+
+        Post saved = this.postRepository.save(post);
+
+        return new PostResponse(saved.getId(), saved.getTitle(), saved.getMember().getLoginId());
+    }
+    @Transactional
+    public void delete(Long id) {
+        Post post = this.postRepository.findById(id).orElseThrow(() -> new NotFoundException("post missing"));
+        this.postRepository.delete(post);
+    }
 
 }
