@@ -23,8 +23,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
             select p.id as id, p.title as title, m.loginId as loginId
                         from Post p
-                                    join p p.member m
-                        """,
+                                    join p.member m
+            """,
             countQuery = """
                     select count(p)
                     from Post p
