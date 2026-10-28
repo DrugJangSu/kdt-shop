@@ -2,6 +2,7 @@ package com.kdt.shop;
 
 import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +57,7 @@ public class PostService {
                 .getLoginId());
     }
     @Transactional
+    @CacheEvict(cacheNames = "shopPosts", allEntries = true)
     public PostResponse create(PostCreateRequest request) {
         Member member = this.memberRepository.findByLoginId("shop01").orElseThrow();
 
@@ -69,6 +71,7 @@ public class PostService {
         return new PostResponse(saved.getId(), saved.getTitle(), saved.getMember().getLoginId());
     }
     @Transactional
+    @CacheEvict(cacheNames = "shopPosts", allEntries = true)
     public void delete(Long id) {
         Post post = this.postRepository.findById(id).orElseThrow(() -> new NotFoundException("post missing"));
         this.postRepository.delete(post);
