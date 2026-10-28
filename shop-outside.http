@@ -4,3 +4,19 @@
 ### 외부 서버 직접 확인 — 아직 우리 컨트롤러 검증은 아님
 GET {{outsideBaseUrl}}/posts/1
 Accept: application/json
+
+### 우리 앱을 거쳐 외부 1번 제목 읽기
+GET {{baseUrl}}/api/v1/outside/posts/1
+Accept: application/json
+
+### 경로 번호만 바꿔 외부 2번 제목 읽기
+GET {{baseUrl}}/api/v1/outside/posts/2
+Accept: application/json
+
+### 외부 원본 2번과 대조 — 이 요청은 우리 앱을 거치지 않음
+GET {{outsideBaseUrl}}/posts/2
+Accept: application/json
+
+### 기존 로컬 목록도 유지되는지 확인
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
+Accept: application/json
