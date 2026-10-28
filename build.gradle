@@ -24,18 +24,56 @@ repositories {
 }
 
 dependencies {
+    // [키워드 설명]
+    //  - implementation     : 컴파일 + 실행 모두에 필요한 라이브러리 (가장 흔한 형태)
+    //  - compileOnly        : 컴파일할 때만 필요하고, 실행(jar)에는 포함하지 않음
+    //  - runtimeOnly        : 코드에서 직접 쓰진 않지만, 실행할 때 필요함
+    //  - annotationProcessor: 컴파일 중에 코드를 자동 생성해 주는 도구
+    //  - test~              : 위 키워드들의 "테스트 코드 전용" 버전 (테스트할 때만 사용)
+    // [starter란?] 관련 라이브러리 여러 개를 한 번에 묶어 둔 "세트 상품". 버전도 Spring Boot가 알아서 맞춰 준다.
+
     // --- Spring / JPA / DB 기본 의존성 -------------------------------------
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'   // Spring Data JPA + Hibernate
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'     // @RestController, JSON 응답
-    compileOnly 'org.projectlombok:lombok'                                  // 컴파일할 때만 쓰는 Lombok(실행 시 불필요)
-    runtimeOnly 'com.mysql:mysql-connector-j'                               // MySQL JDBC 드라이버
-    annotationProcessor 'org.projectlombok:lombok'                          // @Getter, @RequiredArgsConstructor 등을 실제 코드로 생성
+    // Spring Data JPA + Hibernate: 자바 객체(@Entity)로 DB를 다루게 해 준다. SQL을 직접 안 써도 저장/조회 가능
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Spring MVC: 웹 API 서버를 만드는 기본 도구. @RestController, @GetMapping, JSON 응답 등을 사용 가능 (내장 Tomcat 포함)
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+
+    // RestClient: 우리 서버에서 "다른 서버의 API를 호출"할 때 쓰는 HTTP 클라이언트 (외부 API 연동용)
+    implementation 'org.springframework.boot:spring-boot-starter-restclient'
+
+    // Lombok(컴파일용): @Getter, @Setter, @Builder 등으로 반복되는 보일러플레이트 코드를 줄여 준다.
+    // 컴파일할 때만 필요하므로 compileOnly (실행 시에는 이미 코드가 생성된 상태)
+    compileOnly 'org.projectlombok:lombok'
+
+    // MySQL JDBC 드라이버: 자바가 MySQL DB와 통신하게 해 주는 "통역사". 실행할 때만 필요해서 runtimeOnly
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Lombok(코드 생성기): 위 어노테이션(@Getter 등)을 읽어 실제 getter/생성자 코드를 만들어 낸다.
+    // (compileOnly와 항상 짝으로 써야 Lombok이 동작한다)
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // --- 테스트 의존성 -----------------------------------------------------
+    // JPA 테스트 도구: @DataJpaTest 등으로 Repository(DB 접근 계층)만 가볍게 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+
+    // MVC 테스트 도구: MockMvc 등으로 Controller(API)를 서버 띄우지 않고 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+
+    // 테스트 코드 안에서도 Lombok을 쓰기 위한 설정 (아래 testAnnotationProcessor와 짝)
     testCompileOnly 'org.projectlombok:lombok'
+
+    // JUnit 테스트 실행기: Gradle이 JUnit 테스트를 찾아서 실행할 때 필요 (최신 Gradle에서는 명시 권장)
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 테스트 코드용 Lombok 코드 생성기
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // --- 캐시 / Redis ------------------------------------------------------
+    // Spring Cache: @Cacheable 등으로 "자주 조회하는 결과를 저장해 두고 재사용"해 응답을 빠르게 한다.
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    // Spring Data Redis: 메모리 기반 저장소 Redis와 연결. 캐시 저장소나 임시 데이터 저장에 쓴다.
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 

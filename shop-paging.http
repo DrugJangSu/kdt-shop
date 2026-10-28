@@ -5,6 +5,8 @@
 ####
 
 @baseUrl = http://127.0.0.1:8080
+@cachePostId = 5
+
 
 ### 첫 페이지
 GET {{baseUrl}}/api/v1/posts?page=0&size=2
@@ -51,4 +53,41 @@ Accept: application/json
 
 ### 0-4 캐시 확인
 GET {{baseUrl}}/api/v1/posts?page=0&size=4
+Accept: application/json
+
+### ① 이 요청만 두 번 실행: 미스 → 히트
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
+Accept: application/json
+
+### ② 크기가 다르면 다른 키
+GET {{baseUrl}}/api/v1/posts?page=0&size=1
+Accept: application/json
+
+### ③ 페이지가 다르면 다른 키
+GET {{baseUrl}}/api/v1/posts?page=1&size=2
+Accept: application/json
+
+### ④ 시작 데이터가 4건일 때 범위를 벗어난 페이지
+GET {{baseUrl}}/api/v1/posts?page=9&size=2
+Accept: application/json
+
+### 새 검증 글 생성 — 실행 후 실제 id 기록
+POST {{baseUrl}}/api/v1/posts
+Content-Type: application/json
+
+{"title":"bagel","body":"menu"}
+
+### 삭제 대상이 이번에 만든 bagel인지 확인
+GET {{baseUrl}}/api/v1/posts/{{cachePostId}}
+Accept: application/json
+
+### bagel 한 건만 삭제 — 정상 응답은 204, 본문 없음
+DELETE {{baseUrl}}/api/v1/posts/{{cachePostId}}
+
+### 삭제 후 같은 단건 조회 — 404
+GET {{baseUrl}}/api/v1/posts/{{cachePostId}}
+Accept: application/json
+
+### 최종 목록 — 다시 미스, 이후 동일 요청은 히트
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
 Accept: application/json

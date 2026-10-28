@@ -10,4 +10,7 @@ public class KdtShopApplication {
         SpringApplication.run(KdtShopApplication.class, args);
     }
 
+    public static record OutsideTitle(String title) {
+
+    }
 }
