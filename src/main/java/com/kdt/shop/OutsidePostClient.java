@@ -1,9 +1,12 @@
 package com.kdt.shop;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
 
 @Service
 public class OutsidePostClient {
@@ -27,5 +30,22 @@ public class OutsidePostClient {
             throw new IllegalStateException("outside response missing");
         }
         return found;
+    }
+    public List<OutsidePost> findByUserId(int outsideUserId) {
+
+        List<OutsidePost> found = this.restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/posts")
+                        .queryParam("userId", outsideUserId).build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<OutsidePost>>() {
+                });
+
+        if (found == null) {
+            throw new IllegalStateException("outside response missing");
+        }
+
+        return found;
+
     }
 }
