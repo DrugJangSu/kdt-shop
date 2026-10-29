@@ -91,3 +91,16 @@ Accept: application/json
 ### 최종 목록 — 다시 미스, 이후 동일 요청은 히트
 GET {{baseUrl}}/api/v1/posts?page=0&size=2
 Accept: application/json
+
+
+### 기본 OpenAPI 문서 — 게시글 목록 데이터가 아님
+GET {{baseUrl}}/v3/api-docs
+Accept: application/json
+
+### v1 그룹 문서 — paths와 summary, 쿼리 인자 정의 확인
+GET {{baseUrl}}/v3/api-docs/v1
+Accept: application/json
+
+### 실제 목록 데이터 — page와 content 확인
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
+Accept: application/json

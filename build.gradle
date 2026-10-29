@@ -42,6 +42,9 @@ dependencies {
     // RestClient: 우리 서버에서 "다른 서버의 API를 호출"할 때 쓰는 HTTP 클라이언트 (외부 API 연동용)
     implementation 'org.springframework.boot:spring-boot-starter-restclient'
 
+    // Swagger UI: 컨트롤러를 읽어 API 문서를 만들고, 브라우저에서 직접 요청해 볼 수 있게 해 준다   ← 추가
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0'
+
     // Lombok(컴파일용): @Getter, @Setter, @Builder 등으로 반복되는 보일러플레이트 코드를 줄여 준다.
     // 컴파일할 때만 필요하므로 compileOnly (실행 시에는 이미 코드가 생성된 상태)
     compileOnly 'org.projectlombok:lombok'
@@ -75,9 +78,6 @@ dependencies {
 
     // Spring Data Redis: 메모리 기반 저장소 Redis와 연결. 캐시 저장소나 임시 데이터 저장에 쓴다.
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-
-
 
     // --- QueryDSL ---------------------------------------------------------
     // querydsl-jpa: JPAQueryFactory, JPAQuery 같은 QueryDSL의 JPA 전용 API
