@@ -21,9 +21,9 @@ public class PostReferenceController {
     }
 
     @GetMapping("/{id}/references")
-    public PostReferencesResponse list(@PathVariable("id") Long id, @RequestParam("outsidePostId") int outsidePostId) {
+    public PostReferencesResponse list(@PathVariable("id") Long id, @RequestParam("outsideUserId") int outsideUserId) {
 
-        return this.postReferenceService.list(id, outsidePostId);
+        return this.postReferenceService.list(id, outsideUserId);
 
     }
 

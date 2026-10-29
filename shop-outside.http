@@ -20,3 +20,33 @@ Accept: application/json
 ### 기존 로컬 목록도 유지되는지 확인
 GET {{baseUrl}}/api/v1/posts?page=0&size=2
 Accept: application/json
+
+
+
+### 기존 단건 조회는 기존 응답을 유지
+GET {{baseUrl}}/api/v1/posts/{{localPostId}}
+Accept: application/json
+
+### 외부 원본 후보 배열과 대조
+GET {{outsideBaseUrl}}/posts?userId=1
+Accept: application/json
+
+### 우리 앱에서 같은 후보 목록 확인
+GET {{baseUrl}}/api/v1/posts/{{localPostId}}/references?outsideUserId=1
+Accept: application/json
+
+### 아래 selectedOutsidePostId를 후보 references의 실제 id로 바꾼 뒤 실행
+GET {{baseUrl}}/api/v1/posts/{{localPostId}}/reference?outsidePostId={{selectedOutsidePostId}}
+Accept: application/json
+
+### 같은 로컬 글에 외부 1번 참고글을 함께 표시
+GET {{baseUrl}}/api/v1/posts/{{localPostId}}/reference?outsidePostId=1
+Accept: application/json
+
+### 로컬 글은 유지하고 외부 참고글만 2번으로 변경
+GET {{baseUrl}}/api/v1/posts/{{localPostId}}/reference?outsidePostId=2
+Accept: application/json
+
+### 필수 외부 번호 생략: 400, 로컬·외부 조회 전 실패
+GET {{baseUrl}}/api/v1/posts/{{localPostId}}/reference
+Accept: application/json
