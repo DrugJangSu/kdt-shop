@@ -1,5 +1,7 @@
 @baseUrl = http://127.0.0.1:8080
 @outsideBaseUrl = https://jsonplaceholder.typicode.com
+@localPostId = 4
+@selectedOutsidePostId = 3
 
 ### 외부 서버 직접 확인 — 아직 우리 컨트롤러 검증은 아님
 GET {{outsideBaseUrl}}/posts/1
