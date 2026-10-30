@@ -1,4 +1,6 @@
 package regex;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegexIntro {
 
@@ -41,14 +43,31 @@ public class RegexIntro {
 //        System.out.println("range=" + "123".matches("[0-9]{3}"));
 //        System.out.println("wrong=" + "12a".matches(regex));
 
-        String phone = "010-1234-5678";
-        String regex = "010-[0-9]{4}-[0-9]{4}";
-        if (phone.matches(regex)) {
-            String normalized = phone.replace("-", "");
-            System.out.println("저장할 값=" + normalized);
-        } else {
-            System.out.println("거절");
+//        String phone = "010-1234-5678";
+//        String regex = "010-[0-9]{4}-[0-9]{4}";
+//        if (phone.matches(regex)) {
+//            String normalized = phone.replace("-", "");
+//            System.out.println("저장할 값=" + normalized);
+//        } else {
+//            System.out.println("거절");
+//        }
+//        System.out.println("원본" + phone);
+
+
+//        KDT-120, KDT-305를 찾는다고 할 때:
+
+        Pattern pattern = Pattern.compile("KDT-[0-9]{3}");
+        String text = "KDT-120 / KDT-305"; // 이거는 실패함. 각각이 아닌 하나의 문자열이기 때문
+
+        System.out.println("whole= " + pattern.matcher(text).matches());
+
+        Matcher matcher = pattern.matcher(text);
+        while(matcher.find()) {
+            System.out.println(matcher.group() + "[" + matcher.start() + "," + matcher.end() + ")");
         }
-        System.out.println("원본" + phone);
+
+
+
+
     }
 }
