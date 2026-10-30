@@ -1,0 +1,26 @@
+@baseUrl = http://127.0.0.1:8080
+
+### 허용 출처의 목록: 200 + Allow-Origin
+GET {{baseUrl}}/api/v1/posts?page=0&size=2
+Origin: http://127.0.0.1:8000
+Accept: application/json
+
+### JSON 생성 사전 요청: 200, 실제 저장은 하지 않음
+OPTIONS {{baseUrl}}/api/v1/posts
+Origin: http://127.0.0.1:8000
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type
+
+### 호스트 표기가 다른 출처: 403 + Allow-Origin 없음
+OPTIONS {{baseUrl}}/api/v1/posts
+Origin: http://localhost:8000
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type
+
+### JSON 문법 오류: 400 + Allow-Origin, 서비스 호출 전 실패
+POST {{baseUrl}}/api/v1/posts
+Origin: http://127.0.0.1:8000
+Content-Type: application/json
+Accept: application/json
+
+{"title":"draft" "body":"menu"}
